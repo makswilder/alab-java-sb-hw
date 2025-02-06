@@ -1,14 +1,15 @@
 package com.coworking.coworkingspace.controller;
 
+import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import com.coworking.coworkingspace.model.CoworkingSpace;
 import com.coworking.coworkingspace.service.AdminService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/admin/spaces")
+@Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     private final AdminService adminService;
@@ -17,20 +18,30 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping
-    public List<CoworkingSpace> getAllSpaces() {
-        return adminService.viewSpaces();
+    // For Loading spaces.html
+    @GetMapping("/spaces")
+    public String viewSpaces(Model model) {
+        List<CoworkingSpace> spaces = adminService.viewSpaces();
+        model.addAttribute("coworkingSpaces", spaces);
+        return "spaces";
     }
 
-    @PostMapping
-    public ResponseEntity<String> addSpace(@RequestBody CoworkingSpace space) {
+    // For Loading spaces.html
+    @GetMapping("/add")
+    public String addSpace(Model model) {
+        model.addAttribute("space", new CoworkingSpace());
+        return "addSpace";
+    }
+
+   @PostMapping("/add")
+   public String addSpace(@ModelAttribute CoworkingSpace space) {
         adminService.addSpace(space);
-        return ResponseEntity.ok("Space added successfully!");
-    }
+        return "redirect:/admin/spaces";
+   }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSpace(@PathVariable int id) {
+    @GetMapping("/remove/{id}")
+    public String removeSpace(@PathVariable int id) {
         adminService.removeSpace(id);
-        return ResponseEntity.ok("Space deleted successfully!");
+        return "redirect:/admin/spaces";
     }
 }

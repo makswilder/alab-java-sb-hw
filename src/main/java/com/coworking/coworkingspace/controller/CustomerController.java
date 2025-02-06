@@ -1,15 +1,17 @@
 package com.coworking.coworkingspace.controller;
 
-import com.coworking.coworkingspace.model.CoworkingSpace;
+
 import com.coworking.coworkingspace.model.Reservations;
 import com.coworking.coworkingspace.service.CustomerService;
-import org.springframework.http.ResponseEntity;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/customers")
+@Controller
+@RequestMapping("/reservations")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -18,31 +20,42 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping("/available-spaces")
-    public List<CoworkingSpace> getAvailableSpaces() {
-        return customerService.findAvailableSpaces();
-    }
-
     @PostMapping("/reserve")
-    public ResponseEntity<String> makeReservation(
+    public String makeReservation(
             @RequestParam int spaceID,
             @RequestParam String customerName,
             @RequestParam String date,
             @RequestParam String startTime,
-            @RequestParam String endTime) {
+            @RequestParam String endTime,
+            Model model) {
 
-        customerService.makeReservation(spaceID, customerName, date, startTime, endTime);
-        return ResponseEntity.ok("Reservation successful!");
+        try {
+            Reservations reservations = customerService.makeReservation(spaceID, customerName, date, startTime, endTime);
+            model.addAttribute("successMessage", "Reservation successful!");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/reservations";
     }
 
-    @GetMapping("/reservations")
-    public List<Reservations> viewReservations(@RequestParam String customerName) {
-        return customerService.viewMyReservations(customerName);
+    @GetMapping
+    public String viewReservations(@RequestParam(required = false) String customerName, Model model) {
+        List<Reservations> reservations = customerService.viewMyReservations(customerName);
+        model.addAttribute("MyReservation", reservations);
+        return "reservations";
     }
 
-    @DeleteMapping("/cancel/{reservationID}")
-    public ResponseEntity<String> cancelReservation(@PathVariable int reservationID) {
-        customerService.cancelReservation(reservationID);
-        return ResponseEntity.ok("Reservation canceled successfully!");
+    @PostMapping("/cancel")
+    public String cancelReservation(@RequestParam int id, Model model) {
+
+        try {
+            customerService.cancelReservation(id);
+            model.addAttribute("successMessage", "Reservation canceled successfully!");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+
+        return "redirect:/reservations";
     }
 }

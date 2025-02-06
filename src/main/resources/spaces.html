@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coworking Spaces</title>
+    <style>
+
+        /* General Page Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F6EAD2;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: #003366;
+            margin-top: 20px;
+        }
+
+        /* Coworking Space Cards */
+        .spaces-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .space-card {
+            background: white;
+            padding: 15px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .space-card:hover {
+            transform: scale(1.05);
+        }
+
+        .space-card h3 {
+            color: #0057B7;
+            margin-bottom: 5px;
+        }
+
+        .space-card p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .form-container {
+            background: white;
+            padding: 20px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0057B7;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #003366;
+        }
+
+        /* Navigation */
+        .nav-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-size: 18px;
+            color: #003366;
+            margin: 10px;
+            display: inline-block;
+        }
+
+        .nav-links a:hover {
+            color: #0057B7;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Explore Coworking Spaces</h1>
+
+<!-- Spaces Display Section -->
+<div class="spaces-container">
+    <div class="space-card" th:each="cs: ${coworkingSpaces}">
+        <h3 th:text="${cs.name}"></h3>
+        <p><strong>Type:</strong> <span th:text="${cs.type}"></span></p>
+        <p><strong>Price:</strong> <span th:text="${cs.price}"></span> Ft</p>
+        <p><strong>Availability:</strong> <span th:text="${cs.availability}"></span></p>
+    </div>
+</div>
+
+<!-- Add Coworking Space Form -->
+<div class="form-container">
+    <h2>Add a New Space</h2>
+    <form action="/coworkingSpace" method="POST">
+        <div class="input-group">
+            <label for="add-name">Name</label>
+            <input id="add-name" name="name" placeholder="Enter name" required type="text">
+        </div>
+        <div class="input-group">
+            <label for="add-type">Type</label>
+            <input id="add-type" name="type" placeholder="Enter type" required type="text">
+        </div>
+        <div class="input-group">
+            <label for="add-price">Price (Ft)</label>
+            <input id="add-price" name="price" placeholder="Enter price in HUF" required step="any" type="number">
+        </div>
+        <button type="submit">Add Space</button>
+    </form>
+</div>
+
+<!-- Delete Coworking Space Form -->
+<div class="form-container">
+    <h2>Delete Space</h2>
+    <form action="/coworkingSpace/delete" method="GET">
+        <div class="input-group">
+            <label for="delete-id">ID</label>
+            <input id="delete-id" name="id" required type="number">
+        </div>
+        <button type="submit">Delete</button>
+    </form>
+</div>
+
+<!-- Update Coworking Space Form -->
+<div class="form-container">
+    <h2>Update Space</h2>
+    <form action="/coworkingSpace/update" method="POST">
+        <div class="input-group">
+            <label for="update-id">ID</label>
+            <input id="update-id" name="id" placeholder="Enter ID" required type="number">
+        </div>
+        <div class="input-group">
+            <label for="update-name">Name</label>
+            <input id="update-name" name="name" placeholder="Enter name" required type="text">
+        </div>
+        <div class="input-group">
+            <label for="update-type">Type</label>
+            <input id="update-type" name="type" placeholder="Enter type" required type="text">
+        </div>
+        <div class="input-group">
+            <label for="update-price">Price (Ft)</label>
+            <input id="update-price" name="price" placeholder="Enter price in HUF" required step="any" type="number">
+        </div>
+        <button type="submit">Update</button>
+    </form>
+</div>
+
+<!-- Navigation Links -->
+<div class="nav-links">
+    <a href="http://localhost:8080/coworkingBookingSpaces">Customer Menu</a>
+</div>
+
+</body>
+</html>
