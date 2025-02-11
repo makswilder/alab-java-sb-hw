@@ -1,5 +1,6 @@
 package com.coworking.coworkingspace.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import com.coworking.coworkingspace.model.CoworkingSpace;
@@ -20,10 +21,12 @@ public class AdminController {
 
     // For Loading spaces.html
     @GetMapping("/spaces")
-    public String viewSpaces(Model model) {
+    public ResponseEntity<String> viewSpaces(Model model) {
         List<CoworkingSpace> spaces = adminService.viewSpaces();
         model.addAttribute("coworkingSpaces", spaces);
-        return "spaces";
+        return ResponseEntity
+                .ok()
+                .body("spaces");
     }
 
     // For Loading spaces.html

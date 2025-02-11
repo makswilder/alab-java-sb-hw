@@ -1,5 +1,6 @@
 package com.coworking.coworkingspace.service;
 
+import com.coworking.coworkingspace.Exceptions.SpaceNotFoundException;
 import com.coworking.coworkingspace.model.CoworkingSpace;
 import com.coworking.coworkingspace.repository.CoworkingSpaceRepo;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,8 @@ public class CoworkingSpaceService {
         repo.save(space);
     }
 
-    public void deleteSpace(int id) {
-        Optional<CoworkingSpace> space = repo.findById(id);
-        if (space.isPresent()) {
-            repo.deleteById(id);
-        } else {
-            throw new RuntimeException("Space with ID " + id + " not found.");
-        }
+    public void deleteSpace(int id) throws SpaceNotFoundException {
+        repo.findById(id).orElseThrow(() -> new SpaceNotFoundException("Space not found"));
+        repo.deleteById(id);
     }
 }

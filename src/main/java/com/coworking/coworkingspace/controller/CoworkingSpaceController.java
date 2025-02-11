@@ -1,5 +1,6 @@
 package com.coworking.coworkingspace.controller;
 
+import com.coworking.coworkingspace.Exceptions.SpaceNotFoundException;
 import com.coworking.coworkingspace.model.CoworkingSpace;
 import com.coworking.coworkingspace.service.CoworkingSpaceService;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class CoworkingSpaceController {
             service.deleteSpace(id);
             return ResponseEntity
                     .ok("Space deleted successfully!");
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | SpaceNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(e.getMessage());
