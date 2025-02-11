@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -16,6 +17,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
+@WebMvcTest(AdminController.class)
 class AdminControllerTest {
 
     private MockMvc mockMvc;
@@ -33,7 +36,7 @@ class AdminControllerTest {
     }
 
     @Test
-    void shouldReturnSpacesView() throws Exception {
+    void shouldReturnSpacesViewWhenSpaceIsReserved() throws Exception {
         List<CoworkingSpace> spaces = List.of(new CoworkingSpace(1, "Private Office", 100, true));
         when(adminService.viewSpaces()).thenReturn(spaces);
 
@@ -58,7 +61,6 @@ class AdminControllerTest {
 
         verify(adminService, times(1)).addSpace(any(CoworkingSpace.class));
     }
-
 
     @Test
     void shouldRemoveSpaceAndRedirect() throws Exception {

@@ -51,7 +51,6 @@ class CoworkingSpaceControllerTest {
     @Test
     void shouldAddSpaceSuccessfully() throws Exception {
         doNothing().when(coworkingSpaceService).saveSpace(any(CoworkingSpace.class));
-
         mockMvc.perform(post("/api/spaces")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"id\": 1, \"type\": \"Private Office\", \"price\": 100, \"available\": true}"))
@@ -71,6 +70,7 @@ class CoworkingSpaceControllerTest {
 
         verify(coworkingSpaceService, times(1)).deleteSpace(1);
     }
+
 
     @Test
     void shouldReturnNotFoundForNonExistingSpace() throws Exception {
