@@ -4,11 +4,12 @@ import com.coworking.coworkingspace.model.CoworkingSpace;
 import com.coworking.coworkingspace.service.CoworkingSpaceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/spaces")
 public class CoworkingSpaceController {
 

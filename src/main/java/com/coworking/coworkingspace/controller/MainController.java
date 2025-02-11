@@ -3,11 +3,12 @@ package com.coworking.coworkingspace.controller;
 import com.coworking.coworkingspace.model.CoworkingSpace;
 import com.coworking.coworkingspace.service.AdminService;
 import com.coworking.coworkingspace.service.CustomerService;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/main")
 public class MainController {
 
