@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Code
@@ -23,6 +23,9 @@ jobs:
           java-version: '21'
           cache: gradle
 
+      - name: Grant Execute Permission for Gradle Wrapper
+        if: runner.os != 'Windows'
+        run: chmod +x gradlew
 
       - name: Build with Gradle
         run: ./gradlew build
