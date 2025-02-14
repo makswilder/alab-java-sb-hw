@@ -15,7 +15,6 @@
 
         body {
             margin: 0;
-            padding: 0;
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, var(--secondary-color), #ffe7b3);
             color: var(--text-color);
@@ -121,20 +120,6 @@
             background: var(--button-hover);
         }
 
-        .success-message {
-            color: green;
-            text-align: center;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        .error-message {
-            color: red;
-            text-align: center;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
         .nav-links {
             display: flex;
             justify-content: center;
@@ -155,6 +140,23 @@
 
         .nav-links a:hover {
             background: var(--button-hover);
+        }
+
+        .nav-links form button.logout {
+            background: linear-gradient(135deg, #ff0000, #ff4500);
+            color: #fff;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .nav-links form button.logout:hover {
+            background: linear-gradient(135deg, #a4161a, #e60000);
+            transform: translateY(-5px);
         }
 
         footer {
@@ -181,16 +183,16 @@
         <th>Name</th>
         <th>Type</th>
         <th>Price</th>
-        <th>Availability</th>
+        <th>Available</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="cs : ${coworkingSpaces}">
-        <td th:text="${cs.id}"></td>
+        <td th:text="${cs.spaceId}"></td>
         <td th:text="${cs.name}"></td>
         <td th:text="${cs.type}"></td>
         <td th:text="${cs.price}"></td>
-        <td th:text="${cs.availability ? '🟢 Available' : '🔴 Booked'}"></td>
+        <td th:text="${cs.available ? '🟢 Available' : '🔴 Booked'}"></td>
     </tr>
     </tbody>
 </table>
@@ -198,58 +200,64 @@
 <div class="form-container">
     <h2>➕ Add New Space</h2>
     <form action="/coworkingSpace" method="POST">
-        <input name="name" placeholder="🏷️ Name" required type="text">
-        <select name="type" required>
-            <option value="">Select Type</option>
-            <th:block th:each="enumValue : ${types}">
-                <option th:text="${enumValue}" th:value="${enumValue}"></option>
-            </th:block>
-        </select>
-        <input name="price" placeholder="💲 Price" required step="any" type="number">
+        <label>
+            <input name="name" placeholder="🏷️ Name" required type="text">
+        </label>
+        <label>
+            <select name="type" required>
+                <option value="">Select Type</option>
+                <th:block th:each="enumValue : ${types}">
+                    <option th:text="${enumValue}" th:value="${enumValue}"></option>
+                </th:block>
+            </select>
+        </label>
+        <label>
+            <input name="price" placeholder="💲 Price" required step="any" type="number">
+        </label>
         <button type="submit">✅ Add Space</button>
     </form>
 </div>
 
 <div class="form-container">
     <h2>❌ Delete Space</h2>
-    <div class="success-message" th:if="${deleteResponseDto != null and deleteResponseDto.success}">
-        🎉 Coworking space has been deleted!
-    </div>
-    <div class="error-message" th:if="${deleteResponseDto != null and !deleteResponseDto.success}">
-        ⚠️ Error: <span th:text="${deleteResponseDto.error}"></span>
-    </div>
     <form action="/coworkingSpace/delete" method="GET">
-        <input name="id" placeholder="🔢 Space ID" required type="number">
+        <label>
+            <input name="id" placeholder="🔢 Space ID" required type="number">
+        </label>
         <button type="submit">🗑️ Delete Space</button>
     </form>
 </div>
 
 <div class="form-container">
     <h2>🔄 Update Space</h2>
-    <div class="success-message" th:if="${updateResponseDto != null and updateResponseDto.success}">
-        ✅ Coworking space has been updated!
-    </div>
-    <div class="error-message" th:if="${updateResponseDto != null and !updateResponseDto.success}">
-        ⚠️ Error: <span th:text="${updateResponseDto.error}"></span>
-    </div>
     <form action="/coworkingSpace/update" method="POST">
-        <input name="id" placeholder="🔢 Space ID" required type="number">
-        <input name="name" placeholder="🏷️ New Name" required type="text">
-        <select name="type" required>
-            <option value="">Select Type</option>
-            <th:block th:each="enumValue : ${types}">
-                <option th:text="${enumValue}" th:value="${enumValue}"></option>
-            </th:block>
-        </select>
-        <input name="price" placeholder="💲 New Price" required step="any" type="number">
+        <label>
+            <input name="id" placeholder="🔢 Space ID" required type="number">
+        </label>
+        <label>
+            <input name="name" placeholder="🏷️ New Name" required type="text">
+        </label>
+        <label>
+            <select name="type" required>
+                <option value="">Select Type</option>
+                <th:block th:each="enumValue : ${types}">
+                    <option th:text="${enumValue}" th:value="${enumValue}"></option>
+                </th:block>
+            </select>
+        </label>
+        <label>
+            <input name="price" placeholder="💲 New Price" required step="any" type="number">
+        </label>
         <button type="submit">🔁 Update Space</button>
     </form>
 </div>
 
 <div class="nav-links">
-    <a href="/coworkingBookingSpaces">🙋‍♂️ Customer Menu</a>
+    <a href="/customer/coworkingSpaces">🙋‍♂️ Customer Menu</a>
     <a href="/">🏡 Home</a>
-    <a href="/logout">🚪 Logout</a>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit" class="logout">🚪 Logout</button>
+    </form>
 </div>
 
 <footer>

@@ -20,16 +20,14 @@ public class CustomerController {
     private final CustomerService customerService;
     private final CoworkingSpaceRepo spaceRepo;
 
-    // View available spaces
     @GetMapping
     public String viewAvailableSpaces(Model model) {
         populateSpacesAndReservations(model);
-        return "reservations.html";
+        return "reservations";
     }
 
     private void populateSpacesAndReservations(Model model) {
         List<CoworkingSpace> availableSpaces = spaceRepo.findCoworkingSpaceByAvailable(true);
-
         List<CoworkingSpace> reservations = spaceRepo.findByReservationDetailsIsNotNull();
 
         model.addAttribute("AvailableSpaces", availableSpaces);
@@ -39,7 +37,6 @@ public class CustomerController {
     @PostMapping("/reservations")
     public String reserveSpace(@RequestParam int id,
                                @RequestParam String reservationDetails,
-                               @RequestParam String spaceDate,
                                Model model) {
         StatusResponse response;
         try {
@@ -50,13 +47,14 @@ public class CustomerController {
         }
         model.addAttribute("reserveResponseDto", response);
         populateSpacesAndReservations(model);
-        return "reservations.html";
+        return "reservations";
     }
+
 
     @PostMapping("/reservations/cancel")
     public String cancelReservation(@RequestParam("id") Integer id) {
         customerService.cancelReservation(id);
-        return "redirect:/customer/coworkingBookingSpaces";
+        return "redirect:/customer/coworkingSpaces";
     }
 
     @GetMapping("/api/available")

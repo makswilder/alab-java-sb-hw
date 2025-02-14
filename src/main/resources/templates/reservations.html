@@ -132,14 +132,6 @@
             color: var(--primary-color);
         }
 
-        .success-message {
-            color: green;
-        }
-
-        .error-message {
-            color: red;
-        }
-
         .nav-links {
             display: flex;
             justify-content: center;
@@ -147,20 +139,43 @@
             margin: 40px 0;
         }
 
-        .nav-links a {
+        .nav-button {
             text-decoration: none;
             color: #fff;
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             font-weight: bold;
-            padding: 12px 25px;
-            border-radius: 30px;
+            padding: 15px 30px;
+            border-radius: 50px;
             transition: 0.4s;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            text-align: center;
+            appearance: none;
+            -webkit-appearance: none;
         }
 
-        .nav-links a:hover {
-            background: var(--button-hover);
+        .nav-button:hover {
+            background: linear-gradient(135deg, var(--button-hover), #ff9000);
             transform: translateY(-5px);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff0000, #ff6347);
+            color: #fff;
+            font-weight: bold;
+            border: 2px solid #fff;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #cc0000, #e60000);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
         }
 
         footer {
@@ -178,24 +193,25 @@
 </header>
 
 <main>
+    <!-- Available Spaces Table -->
     <h2>🌿 Available Spaces</h2>
     <table>
         <thead>
         <tr>
-            <th>#</th>
+            <th>ID</th>
             <th>Name</th>
             <th>Type</th>
             <th>Price</th>
-            <th>Status</th>
+            <th>Available</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="cs : ${AvailableSpaces}">
-            <td th:text="${cs.id}"></td>
+            <td th:text="${cs.spaceId}"></td>
             <td th:text="${cs.name}"></td>
             <td th:text="${cs.type}"></td>
             <td th:text="${cs.price}"></td>
-            <td th:text="${cs.availability ? '🟢 Available' : '🔴 Booked'}"></td>
+            <td th:text="${cs.available ? '🟢 Available' : '🔴 Booked'}"></td>
         </tr>
         </tbody>
     </table>
@@ -212,12 +228,12 @@
         </thead>
         <tbody>
         <tr th:each="reservation : ${MyReservation}">
-            <td th:text="${reservation.id}"></td>
-            <td th:text="${reservation.coworkingSpace.name}"></td>
-            <td th:text="${reservation.bookingDetails}"></td>
+            <td th:text="${reservation.spaceId}"></td>
+            <td th:text="${reservation.name}"></td>
+            <td th:text="${reservation.reservationDetails}"></td>
             <td>
-                <form action="/reservations/cancel" method="POST">
-                    <input type="hidden" name="id" th:value="${reservation.id}">
+                <form action="/customer/coworkingSpaces/reservations/cancel" method="POST">
+                    <input type="hidden" name="id" th:value="${reservation.spaceId}">
                     <button type="submit" class="cancel-btn">❌ Cancel</button>
                 </form>
             </td>
@@ -228,18 +244,19 @@
     <!-- Reservation Form -->
     <div class="reservation-form">
         <h2>📆 Reserve Your Spot</h2>
+
         <div class="message" th:if="${reserveResponseDto != null}">
-            <span th:classappend="${reserveResponseDto.success ? 'success-message' : 'error-message'}" th:text="${reserveResponseDto.success ? '🎉 Reservation successful!' : reserveResponseDto.error}"></span>
+        <span th:classappend="${reserveResponseDto.success ? 'success-message' : 'error-message'}"
+              th:text="${reserveResponseDto.success ? '🎉 Reservation successful!' : reserveResponseDto.error}">
+        </span>
         </div>
-        <form action="/reservations" method="post">
+
+        <form action="/customer/coworkingSpaces/reservations" method="post">
             <label for="space-id">🔢 Space ID:</label>
             <input id="space-id" type="number" name="id" required>
 
-            <label for="booking-details">🖊️ Booking Details:</label>
-            <input id="booking-details" type="text" name="bookingDetails" required>
-
-            <label for="space-date">📅 Date:</label>
-            <input id="space-date" type="date" name="spaceDate" required>
+            <label for="reservation-details">🖊️ Reservation Details:</label>
+            <input id="reservation-details" type="text" name="reservationDetails" required>
 
             <button type="submit">🚀 Book Now</button>
         </form>
@@ -247,8 +264,11 @@
 
     <!-- Navigation Links -->
     <div class="nav-links">
-        <a href="/">🏠 Home</a>
-        <a href="/logout">🚪 Log Out</a>
+        <a href="/customer/coworkingSpaces" class="nav-button">🏠 Home</a>
+
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="nav-button logout-btn">🚪 Log Out</button>
+        </form>
     </div>
 </main>
 

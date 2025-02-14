@@ -67,21 +67,39 @@
             transform: translateY(-5px);
         }
 
-        .menu a.logout {
-            background: #d63447;
+        .menu form {
+            margin-top: 15px;
         }
 
-        .menu a.logout:hover {
-            background: #a4161a;
+        .menu button.logout {
+            width: 100%;
+            background: linear-gradient(135deg, #d00000, #ff4500);
+            color: #fff;
+            font-weight: bold;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-size: 1.1em;
+        }
+
+        .menu button.logout:hover {
+            background: linear-gradient(135deg, #a4161a, #e63946);
+            transform: translateY(-5px);
         }
     </style>
 </head>
 <body>
 <div class="menu">
     <h1>🏡 Welcome </h1>
-    <a href="http://localhost:8080/coworkingSpaces">🛠️ Admin Dashboard</a>
-    <a href="http://localhost:8080/coworkingBookingSpaces">💼 Customer Menu</a>
-    <a class="logout" href="http://localhost:8080/logout">🚪 Logout</a>
+    <a href="/customer/coworkingSpaces">💼 Customer Menu</a>
+    <a href="/admin/coworkingSpaces">🛠️ Admin Dashboard</a>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit" class="logout">🚪 Logout</button>
+    </form>
 </div>
 </body>
 </html>

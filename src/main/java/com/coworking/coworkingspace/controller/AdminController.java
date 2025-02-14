@@ -12,7 +12,6 @@ import com.coworking.coworkingspace.model.CoworkingSpace;
 import com.coworking.coworkingspace.model.TypeOfSpace;
 import com.coworking.coworkingspace.service.AdminService;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -27,11 +26,12 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    public String viewCoworkingSpaces(Model model, Principal principal) {
+    public String viewCoworkingSpaces(Model model) {
         populateSpaces(model);
-        return "coworkingSpaces.html";
+        return "coworkingSpaces";
     }
 
     private void populateSpaces(Model model) {
@@ -60,7 +60,7 @@ public class AdminController {
             model.addAttribute("deleteResponse", StatusResponse.error("Failed to delete space: " + ex.getMessage()));
         }
         populateSpaces(model);
-        return "coworkingSpaces.html";
+        return "coworkingSpaces";
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -78,7 +78,7 @@ public class AdminController {
             model.addAttribute("updateResponse", StatusResponse.error("Failed to update space: " + ex.getMessage()));
         }
         populateSpaces(model);
-        return "coworkingSpaces.html";
+        return "coworkingSpaces";
     }
 
 

@@ -12,7 +12,7 @@ public class MainController {
 
     @GetMapping("/")
     public String home() {
-        return "main.html";
+        return "main";
     }
 
     @GetMapping("/api/main")
