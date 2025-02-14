@@ -1,6 +1,5 @@
-package com.coworking.coworkingspace.Exceptions;
+package com.coworking.coworkingspace.exception;
 
-// Create Custom Exception
 public class SpaceNotFoundException extends Exception {
     public SpaceNotFoundException(String message) {
         super(message);

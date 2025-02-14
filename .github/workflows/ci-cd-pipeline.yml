@@ -1,19 +1,19 @@
-name: Java app CI/CD Pipeline
+name: Java CI/CD Pipeline With Gradle
 
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
@@ -21,26 +21,36 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: gradle
+          cache: 'gradle'
 
-#      - name: Grant Execute Permission for Gradle Wrapper
-#        if: runner.os != 'Windows'
-#        run: chmod +x gradlew
+      - name: Grant execute permissions to Gradle wrapper
+        run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon
 
-#      - name: Run Tests
-#        run: ./gradlew test
+      - name: Run tests
+        run: ./gradlew test --no-daemon
 
-      - name: Build Docker Image
-        run: docker-compose down && docker-compose build
-
-      - name: Run Container for Tests
-        run: docker-compose up -d
-
-      - name: Upload JAR Artifact
+      - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coworking-spaces-1.0.0-jar
-          path: target/*.jar
+          name: application-jar
+          path: build/libs/*.jar
+
+      - name: Build Docker Image
+        run: docker build -t spaces-app:latest .
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Run Docker Compose
+        run: docker-compose up -d
+
+      - name: List Running Containers (Debug)
+        run: docker ps -a
+
+      - name: Stop and Remove Containers
+        run: docker-compose down

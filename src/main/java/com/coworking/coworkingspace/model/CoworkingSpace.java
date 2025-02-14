@@ -6,7 +6,7 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "coworking_spaces")
+@Table(name = "coworking_space")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,7 +17,10 @@ public class CoworkingSpace implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "space_id", nullable = false, updatable = false)
-    private int spaceID;
+    private Integer spaceId;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "type", nullable = false)
     private String type;
@@ -26,15 +29,14 @@ public class CoworkingSpace implements Serializable {
     private double price;
 
     @Column(name = "available", nullable = false)
-    private boolean available;
+    private boolean available = true;
+
+    @Column(name = "reservation_details")
+    private String reservationDetails;
 
     @Override
     public String toString() {
-        return "CoworkingSpace{" +
-                "ID=" + spaceID +
-                ", Type='" + type + '\'' +
-                ", Price=" + price +
-                ", Available=" + available +
-                '}';
+        return String.format("CoworkingSpace{id=%d, name='%s', type='%s', price=%.2f, available=%b, booking='%s'}",
+                spaceId, name, type, price, available, reservationDetails != null ? reservationDetails : "None");
     }
 }

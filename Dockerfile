@@ -1,9 +1,9 @@
-FROM openjdk:17-jdk-slim
-
+FROM eclipse-temurin:21 AS build
 WORKDIR /app
-
-COPY target/*.jar app.jar
-
+COPY . .
+RUN chmod +x gradlew && ./gradlew bootJar --no-daemon
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
