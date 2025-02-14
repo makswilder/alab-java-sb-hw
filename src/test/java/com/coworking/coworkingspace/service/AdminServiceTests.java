@@ -25,6 +25,7 @@ class AdminServiceTests {
         adminService = new AdminService(coworkingSpaceRepoMock);
     }
 
+
     @Test
     void whenAddSpace_thenRepositorySaveIsCalled() {
         CoworkingSpace space = CoworkingSpace.builder()
