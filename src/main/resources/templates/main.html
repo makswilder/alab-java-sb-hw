@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Home</title>
+    <style>
+        :root {
+            --primary-color: #003f88;
+            --secondary-color: #f6e5c6;
+            --text-color: #1c1c1c;
+            --accent-color: #ffc300;
+            --button-hover: #ff6f00;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--secondary-color), #ffe7b3);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .menu {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            border: 5px solid var(--accent-color);
+            width: 350px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .menu:hover {
+            transform: scale(1.05);
+        }
+
+        .menu h1 {
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 15px;
+            text-shadow: 1px 1px #fff;
+        }
+
+        .menu a {
+            display: block;
+            margin: 15px 0;
+            text-decoration: none;
+            color: #fff;
+            background: var(--accent-color);
+            padding: 1rem;
+            border-radius: 12px;
+            transition: background-color 0.3s, transform 0.2s;
+            font-weight: bold;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .menu a:hover {
+            background: var(--button-hover);
+            transform: translateY(-5px);
+        }
+
+        .menu form {
+            margin-top: 15px;
+        }
+
+        .menu button.logout {
+            width: 100%;
+            background: linear-gradient(135deg, #d00000, #ff4500);
+            color: #fff;
+            font-weight: bold;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-size: 1.1em;
+        }
+
+        .menu button.logout:hover {
+            background: linear-gradient(135deg, #a4161a, #e63946);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+<div class="menu">
+    <h1>🏡 Welcome </h1>
+    <a href="/customer/coworkingSpaces">💼 Customer Menu</a>
+    <a href="/admin/coworkingSpaces">🛠️ Admin Dashboard</a>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit" class="logout">🚪 Logout</button>
+    </form>
+</div>
+</body>
+</html>

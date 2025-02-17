@@ -1,35 +1,44 @@
 package com.coworking.coworkingspace.service;
 
-import com.coworking.coworkingspace.model.CoworkingSpace;
-import com.coworking.coworkingspace.repository.CoworkingSpaceRepo;
+import com.coworking.coworkingspace.exception.SpaceNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+import com.coworking.coworkingspace.model.CoworkingSpace;
+import com.coworking.coworkingspace.model.TypeOfSpace;
+import com.coworking.coworkingspace.repository.CoworkingSpaceRepo;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
 
     private final CoworkingSpaceRepo coworkingSpaceRepo;
 
-    public AdminService(CoworkingSpaceRepo coworkingSpaceRepo) {
-        this.coworkingSpaceRepo = coworkingSpaceRepo;
+    public void addSpace(CoworkingSpace newSpace) {
+        coworkingSpaceRepo.save(newSpace);
     }
 
-    public CoworkingSpace addSpace(CoworkingSpace newSpace) {
-        if (coworkingSpaceRepo.existsById(newSpace.getSpaceID())) {
-            throw new IllegalStateException("Space with ID " + newSpace.getSpaceID() + " already exists!");
-        }
-        return coworkingSpaceRepo.save(newSpace);
+    public CoworkingSpace createSpace(String name, String type, double price) {
+        return CoworkingSpace.builder()
+                .name(name)
+                .type(TypeOfSpace.valueOf(type).name())
+                .price(price)
+                .available(true)
+                .build();
     }
 
-    public void removeSpace(int spaceID) {
-        if (!coworkingSpaceRepo.existsById(spaceID)) {
-            throw new IllegalStateException("Space with ID " + spaceID + " does not exist!");
-        }
-        coworkingSpaceRepo.deleteById(spaceID);
+    @Transactional
+    public void removeSpace(int id) {
+        coworkingSpaceRepo.deleteById(id);
     }
 
-    public List<CoworkingSpace> viewSpaces() {
-        return coworkingSpaceRepo.findAll();
+    @Transactional
+    public void updateSpace(int id, CoworkingSpace updatedSpace) throws SpaceNotFoundException {
+        CoworkingSpace space = coworkingSpaceRepo.findById(id)
+                .orElseThrow(() -> new SpaceNotFoundException("Space not found"));
+        space.setName(updatedSpace.getName());
+        space.setType(updatedSpace.getType());
+        space.setPrice(updatedSpace.getPrice());
+        coworkingSpaceRepo.save(space);
     }
 }

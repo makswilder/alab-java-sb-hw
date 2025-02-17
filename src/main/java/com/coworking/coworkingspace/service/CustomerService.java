@@ -1,55 +1,35 @@
 package com.coworking.coworkingspace.service;
 
-import com.coworking.coworkingspace.model.CoworkingSpace;
-import com.coworking.coworkingspace.model.Reservations;
-import com.coworking.coworkingspace.repository.CoworkingSpaceRepo;
-import com.coworking.coworkingspace.repository.ReservationsRepo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import com.coworking.coworkingspace.model.CoworkingSpace;
+import com.coworking.coworkingspace.repository.CoworkingSpaceRepo;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerService {
 
     private final CoworkingSpaceRepo coworkingSpaceRepo;
-    private final ReservationsRepo reservationsRepo;
+    private final ReservationService reservationService;
 
-    public CustomerService(CoworkingSpaceRepo coworkingSpaceRepo, ReservationsRepo reservationsRepo) {
-        this.coworkingSpaceRepo = coworkingSpaceRepo;
-        this.reservationsRepo = reservationsRepo;
+    @Transactional
+    public void reserve(int spaceId, String reservationDetails) {
+        CoworkingSpace space = coworkingSpaceRepo.findById(spaceId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Space not found"));
+
+        CoworkingSpace reservedSpace = reservationService.reserveSpace(space, reservationDetails);
+        coworkingSpaceRepo.save(reservedSpace);
     }
 
-    public List<CoworkingSpace> findAvailableSpaces() {
-        return coworkingSpaceRepo.findByAvailableTrue();
-    }
+    @Transactional
+    public void cancelReservation(int spaceId) {
+        CoworkingSpace space = coworkingSpaceRepo.findById(spaceId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Space not found"));
 
-    public Reservations makeReservation(int spaceID, String customerName, String date, String startTime, String endTime) {
-        return coworkingSpaceRepo.findById(spaceID)
-                .filter(CoworkingSpace::isAvailable)
-                .map(space -> {
-                    space.setAvailable(false);
-                    coworkingSpaceRepo.save(space);
-
-                    Reservations reservation = new Reservations(0, customerName, date, startTime, endTime, space);
-                    return reservationsRepo.save(reservation);
-                })
-                .orElseThrow(() -> new RuntimeException("Space with ID " + spaceID + " is not available!"));
-    }
-
-    public List<Reservations> viewMyReservations(String customerName) {
-        return reservationsRepo.findByCustomerName(customerName);
-    }
-
-    public void cancelReservation(int reservationID) {
-        reservationsRepo.findById(reservationID).ifPresentOrElse(reservation -> {
-            coworkingSpaceRepo.findById(reservation.getSpace().getSpaceID()).ifPresent(space -> {
-                space.setAvailable(true);
-                coworkingSpaceRepo.save(space);
-            });
-
-            reservationsRepo.deleteById(reservationID);
-        }, () -> {
-            throw new RuntimeException("No reservation found with ID " + reservationID);
-        });
+        CoworkingSpace updatedSpace = reservationService.cancelReservation(space);
+        coworkingSpaceRepo.save(updatedSpace);
     }
 }

@@ -1,61 +1,96 @@
 package com.coworking.coworkingspace.controller;
 
-
-import com.coworking.coworkingspace.model.Reservations;
-import com.coworking.coworkingspace.service.CustomerService;
-
+import com.coworking.coworkingspace.repository.CoworkingSpaceRepo;
+import com.coworking.coworkingspace.statusresponse.StatusResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.coworking.coworkingspace.model.CoworkingSpace;
+import com.coworking.coworkingspace.service.CustomerService;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("/reservations")
+@RequestMapping("/customer/coworkingSpaces")
+@RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
-
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
-
-    @PostMapping("/reserve")
-    public String makeReservation(
-            @RequestParam int spaceID,
-            @RequestParam String customerName,
-            @RequestParam String date,
-            @RequestParam String startTime,
-            @RequestParam String endTime,
-            Model model) {
-
-        try {
-            Reservations reservations = customerService.makeReservation(spaceID, customerName, date, startTime, endTime);
-            model.addAttribute("successMessage", "Reservation successful!");
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-        }
-
-        return "redirect:/reservations";
-    }
+    private final CoworkingSpaceRepo spaceRepo;
 
     @GetMapping
-    public String viewReservations(@RequestParam(required = false) String customerName, Model model) {
-        List<Reservations> reservations = customerService.viewMyReservations(customerName);
-        model.addAttribute("MyReservation", reservations);
+    public String viewAvailableSpaces(Model model) {
+        populateSpacesAndReservations(model);
         return "reservations";
     }
 
-    @PostMapping("/cancel")
-    public String cancelReservation(@RequestParam int id, Model model) {
+    private void populateSpacesAndReservations(Model model) {
+        List<CoworkingSpace> availableSpaces = spaceRepo.findCoworkingSpaceByAvailable(true);
+        List<CoworkingSpace> reservations = spaceRepo.findByReservationDetailsIsNotNull();
 
+        model.addAttribute("AvailableSpaces", availableSpaces);
+        model.addAttribute("MyReservation", reservations);
+    }
+
+    @PostMapping("/reservations")
+    public String reserveSpace(@RequestParam int id,
+                               @RequestParam String reservationDetails,
+                               Model model) {
+        StatusResponse response;
+        try {
+            customerService.reserve(id, reservationDetails);
+            response = StatusResponse.success("Reservation successful");
+        } catch (Exception ex) {
+            response = StatusResponse.error("Failed to reserve space: " + ex.getMessage());
+        }
+        model.addAttribute("reserveResponseDto", response);
+        populateSpacesAndReservations(model);
+        return "reservations";
+    }
+
+
+    @PostMapping("/reservations/cancel")
+    public String cancelReservation(@RequestParam("id") Integer id) {
+        customerService.cancelReservation(id);
+        return "redirect:/customer/coworkingSpaces";
+    }
+
+    @GetMapping("/api/available")
+    @ResponseBody
+    public ResponseEntity<List<CoworkingSpace>> getAvailableSpacesApi() {
+        List<CoworkingSpace> availableSpaces = spaceRepo.findCoworkingSpaceByAvailable(true);
+        return ResponseEntity.ok(availableSpaces);
+    }
+
+    @GetMapping("/api/reservations")
+    @ResponseBody
+    public ResponseEntity<List<CoworkingSpace>> getReservationsApi() {
+        List<CoworkingSpace> reservations = spaceRepo.findByReservationDetailsIsNotNull();
+        return ResponseEntity.ok(reservations);
+    }
+
+    @PostMapping("/api/reserve")
+    @ResponseBody
+    public ResponseEntity<StatusResponse> reserveSpaceApi(@RequestParam int id,
+                                                          @RequestParam String bookingDetails) {
+        try {
+            customerService.reserve(id, bookingDetails);
+            return ResponseEntity.ok(StatusResponse.success("Reservation successful"));
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(StatusResponse.error("Failed to reserve space: " + ex.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/cancel/{id}")
+    @ResponseBody
+    public ResponseEntity<StatusResponse> cancelReservationApi(@PathVariable Integer id) {
         try {
             customerService.cancelReservation(id);
-            model.addAttribute("successMessage", "Reservation canceled successfully!");
+            return ResponseEntity.ok(StatusResponse.success("Reservation canceled successfully."));
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(StatusResponse.error("Failed to cancel reservation: " + e.getMessage()));
         }
-
-        return "redirect:/reservations";
     }
 }
