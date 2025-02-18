@@ -34,6 +34,6 @@ The app is secured using **JWT-based authentication** through **Spring Security*
 - **Spring Data JPA**: ORM framework for interacting with the database seamlessly.
 - **PostgreSQL**: Relational database used for storing user data, reservations, and workspace details.
 - **Docker & Docker Compose**: For containerizing the application, ensuring easy deployment and scalability.
-- **GitHub Actions (maven.yml)**: CI/CD pipeline for continuous integration and deployment, automating testing and build processes.
+- **GitHub Actions (ci-cd-pipeline.yml)**: CI/CD pipeline for continuous integration and deployment, automating testing and build processes.
 - **Mockito**: Framework for writing unit tests to ensure the application is robust and reliable.
 - **Observer Design Pattern**: Used for notifying customers when their reservation is canceled or modified.
