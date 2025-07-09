@@ -39,4 +39,4 @@ A Spring Boot application for managing coworking space reservations with role-ba
 - Role-based access control (Admin, Customer)
 - Service-Repository-Controller layered architecture
 - Containerized deployment using Docker
-- CI/CD pipeline for automated builds and tests
+- CI/CD pipeline for automated builds and tests 
